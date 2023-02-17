@@ -8,7 +8,7 @@ public class FallingDetector : MonoBehaviour
     {
         if (collision.CompareTag("Player"))
         {
-            Debug.Log("Player caiu!");
+            GameManager.Instance.RespawnPlayer();
         }
     }
 }

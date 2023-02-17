@@ -11,15 +11,24 @@ public class Player : MonoBehaviour
     private Animator anim;
 
     private float _direction;
+    private bool _canUseCheckpoint;
+    private Vector3 _checkpointPosition;
 
     private void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
+
     }
 
     private void Update()
     {
+        if (Input.GetKeyDown(KeyCode.E) && _canUseCheckpoint)
+        {
+            GameManager.Instance.SaveCheckpoint(_checkpointPosition);
+            anim.SetTrigger("save");
+        }
+
         if(Input.GetButtonDown("Jump"))
         {
             rb.AddForce(Vector3.up * JumpForce, ForceMode2D.Impulse);
@@ -53,6 +62,24 @@ public class Player : MonoBehaviour
         else if (_direction < 0)
         {
             transform.eulerAngles = new Vector3(0, 180, 0);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Checkpoint"))
+        {
+            _canUseCheckpoint = true;
+            _checkpointPosition = collision.transform.position;
+        }
+    }
+
+    private void OnTriggerExit2D(Collider2D collision)
+    {
+        if (collision.CompareTag("Checkpoint"))
+        {
+            _canUseCheckpoint = false;
+            _checkpointPosition = Vector3.zero;
         }
     }
 }
